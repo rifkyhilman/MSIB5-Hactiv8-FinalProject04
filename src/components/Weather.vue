@@ -31,7 +31,7 @@
                     </tbody>
                 </table>
 
-                <DaysWeather />
+                <DaysWeather :cityname="cityname"/>
 
                 <div id="div_Form" class="d-flex m-3 justify-content-center">
                     <form action="">
@@ -58,6 +58,7 @@ export default {
     },
     data() {
         return {
+            cityname: this.city,
             temperature: null,
             description: null,
             iconUrl: null,
@@ -74,8 +75,9 @@ export default {
     async created() {
    
         // get data
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=716e2ccdcf5d9ed0b976a7a9480465ec`).then(response => response.json());
-        const weatherData = response;
+        const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
+        const responseData = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=${apiKey}`).then(response => response.json());
+        const weatherData = responseData;
         
         this.temperature = Math.round(weatherData.main.temp);
         this.description = weatherData.weather[0].description;

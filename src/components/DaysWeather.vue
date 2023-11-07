@@ -1,34 +1,63 @@
 <template>
     <div class="days-tab text-center">
-        <div class="loading">Loading...</div>
-        <ul class="p-0">
-            <li class="li-active">
-                <div class="py-3">icon</div>
-                <div class="py-3">day</div>
-                <div class="py-3">12oc</div>
-            </li>
-            <li class="li-active">
-                <div class="py-3">icon</div>
-                <div class="py-3">day</div>
-                <div class="py-3">12oc</div>
-            </li>
-            <li class="li-active">
-                <div class="py-3">icon</div>
-                <div class="py-3">day</div>
-                <div class="py-3">12oc</div>
-            </li>
-            <li class="li-active">
-                <div class="py-3">icon</div>
-                <div class="py-3">day</div>
-                <div class="py-3">12oc</div>
+        <div v-if="loading" class="loading">Loading...</div>
+        <ul v-else class="p-0">
+            <li v-for="day in forecast" :key="day.date" class="li-active">
+                <div class="py-3"><img :src="day.iconUrl"/></div>
+                <div class="py-3">{{ getDayName(day.date) }}</div>
+                <div class="py-3">{{ day.temperature }}&deg;C</div>
             </li>
         </ul>
     </div>
 </template>
 
 <script>
+    import moment from 'moment';
+
     export default {
         name: 'DaysWeather',
+        props: {
+            cityname: String
+        },
+        data () {
+            return {
+                forecast: [],
+                loading: true,
+                iconUrl: true
+            };
+        },
+        mounted() {
+            this.fetchWeatherData();
+        },
+        methods: {
+            async fetchWeatherData () {
+                const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
+                const city = this.cityname;
+                const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+                
+                const responseData = await fetch (apiUrl).then(response => response.json());
+                const forecastData =  responseData.list;
+                const filterData = forecastData.map( item => {
+                    return {
+                        date: moment(item.dt_txt.split(' ')[0]),
+                        temperature: Math.round(item.main.temp),
+                        description: item.weather[0].description,
+                        iconUrl: `https://api.openweathermap.org/img/w/${item.weather[0].icon}.png`,
+                    }
+                }).reduce((acc, item) => {
+                    if(!acc.some(day => day.date.isSame(item.date, 'day'))){
+                        acc.push(item);
+                    }
+                    return acc;
+                }, []).slice(1, 5);
+
+               this.forecast = filterData;
+               this.loading = false;
+            },
+            getDayName(date) {
+                return date.format('ddd');
+            }
+        }
     }
 </script>
 
