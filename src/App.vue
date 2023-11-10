@@ -10,7 +10,6 @@
         </div>
       </div>
   </div>
-  <br>
   <Weather :city="city" v-if="showWeather" />
 </template>
 

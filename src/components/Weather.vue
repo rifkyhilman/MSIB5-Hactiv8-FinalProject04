@@ -1,25 +1,20 @@
 <template>
     <div class="container p-0">
-        <div class="d-flex">
-            <div class="card main-div w-100">
-                <div class="p-3">
-                    <h2 class="mb-1 day">Today</h2>
-                    <p class="text-light date mb-0">{{ date }}</p>
-                    <small>{{ time }}</small>
-                    <h2 class="place"><i class="fa fa-location">{{ name }}, <small>{{ country }}</small></i></h2>
-                    <div class="temp">
-                        <h1 class="weather-temp">{{ temperature }}&deg;</h1>
-                        <h2 class="text-light">{{ description }} <img :src="iconUrl"/></h2>
-                    </div>
+        <div class="card-1 w-100">
+            <div class="content p-3 text-light">
+                <h2 class="place">{{ name }}, <small>{{ country }}</small></h2>
+                <div class="temp">
+                    <h1 class="weather-temp">{{ temperature }}&deg;</h1>
+                    <p class="text-light">{{ description }} </p>
+                    <img :src="iconUrl"/>
                 </div>
+                <p class="text-light date mb-0">{{ date }}</p>
+                <small>{{ time }}</small>
             </div>
-            <div class="card-2 w-100">
+        </div>
+        <div class="card-2 w-100 p-3">
                 <table class="m-4">
                     <tbody>
-                        <tr>
-                            <th>Seal</th>
-                            <td>{{ sea_level }}</td>
-                        </tr>
                         <tr>
                             <th>Humidity</th>
                             <td>{{ humidity }}</td>
@@ -30,16 +25,8 @@
                         </tr>
                     </tbody>
                 </table>
-
                 <DaysWeather :cityname="cityname"/>
-
-                <div id="div_Form" class="d-flex m-3 justify-content-center">
-                    <form action="">
-                        <input type="button" value="change location" class="btn change-btn btn-primary">
-                    </form>
-                </div>
             </div>
-        </div>
     </div>
 </template>
 
@@ -65,7 +52,6 @@ export default {
             date: null,
             time: null,
             name: null,
-            sea_level: null,
             wind: null,
             country: null,
             humidity: null,
@@ -84,7 +70,6 @@ export default {
         this.name = weatherData.name;
         this.iconUrl = `https://api.openweathermap.org/img/w/${weatherData.weather[0].icon}.png`;
         this.wind = weatherData.wind.speed;
-        this.sea_level = weatherData.main.sea_level;
         this.country = weatherData.sys.country;
         this.humidity = weatherData.main.humidity;
 
@@ -119,31 +104,30 @@ h2.mb-1.day {
     font-weight: 400;
 }
 
-.main-div {
+.card-1 {
     border-radius: 20px;
     color: #fff;
-    background-image: url("https://images.unsplash.com/photo-1597200381847-30ec200eeb9a?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("https://images.unsplash.com/photo-1597200381847-30ec200eeb9a?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
     background-size: cover;
     background-position: center;
-    /* background-blend-mode: overlay; */
-    background-color: rgba(0, 0, 0, 0.5);
     background-repeat: no-repeat;
+    height: 400px;
+    text-align: center;
 }
 
 .temp {
-    position: absolute;
-    bottom: 0;
+    margin: 50px 0 50px 0;
 }
 
-.main-div:hover {
-    transform: scale(1.1);
-    transition: transform 0.5s ease;
-    z-index: 1;
+.content {
+    height: 100%;
 }
+
 
 .card-2 {
     background-color: #212730;
     border-radius: 20px;
+    margin-top: 50px;
 }
 
 .card-details {
