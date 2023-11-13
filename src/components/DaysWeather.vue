@@ -1,13 +1,15 @@
 <template>
     <div class="days-tab text-center">
         <div v-if="loading" class="loading">Loading...</div>
-        <ul v-else class="p-0">
-            <li v-for="day in forecast" :key="day.date" class="li-active">
-                <div class="py-3"><img :src="day.iconUrl"/></div>
-                <div class="py-3">{{ getDayName(day.date) }}</div>
-                <div class="py-3">{{ day.temperature }}&deg;C</div>
-            </li>
-        </ul>
+        <div v-else class="container p-0">
+            <div class="row">
+                <div v-for="day in forecast" :key="day.date" class="col">
+                    <div class="py-3"><img :src="day.iconUrl"/></div>
+                    <div class="py-3">{{ getDayName(day.date) }}</div>
+                    <div class="py-3">{{ day.temperature }}&deg;C</div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -67,25 +69,19 @@
     width: 90%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 20px;
-    margin: auto;
+    margin: 80px 50px 80px 50px;
 }
 
 .loading {
     color: #fff;
 }
 
-ul {
-    margin: 0;
+.container {
+    color: white;
 }
 
-li {
-    display: inline-block;
-    list-style: none;
-    height: 100%;
-    width: 21%;
-    max-width: 21%;
-    font-size: 1vw;
-    line-height: 1.2;
+.row {
+    padding: 50px;
 }
 
 span {
@@ -95,7 +91,7 @@ span {
     height: 35px;
 }
 
-.li-active {
+.col {
     background: #263d5c;
     color: #fff;
     border-radius: 10px;
@@ -103,12 +99,12 @@ span {
     font-weight: 600;
 }
 
-.li-active:hover {
+.col:hover {
     transform: scale(1.2);
     transition: transform 0.1s ease;
 }
 
-.li-active-temp {
+.col-temp {
     display: inline-block;
     background-color: #222831;
     color: #fff;

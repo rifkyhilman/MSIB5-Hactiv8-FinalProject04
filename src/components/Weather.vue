@@ -1,7 +1,7 @@
 <template>
     <div class="container p-0">
         <div class="card-1 w-100">
-            <div class="content p-3 text-light">
+            <div class="content text-light">
                 <h2 class="place">{{ name }}, <small>{{ country }}</small></h2>
                 <div class="temp">
                     <h1 class="weather-temp">{{ temperature }}&deg;</h1>
@@ -13,20 +13,20 @@
             </div>
         </div>
         <div class="card-2 w-100 p-3">
-                <table class="m-4">
-                    <tbody>
-                        <tr>
-                            <th>Humidity</th>
-                            <td>{{ humidity }}</td>
-                        </tr>
-                        <tr>
-                            <th>wind</th>
-                            <td>{{ wind }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <DaysWeather :cityname="cityname"/>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Humidity</th>
+                        <td>{{ humidity }}</td>
+                    </tr>
+                    <tr>
+                        <th>wind</th>
+                        <td>{{ wind }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <DaysWeather :cityname="cityname"/>
+        </div>
     </div>
 </template>
 
@@ -50,13 +50,29 @@ export default {
             description: null,
             iconUrl: null,
             date: null,
-            time: null,
+            time: "00:00:00",
             name: null,
             wind: null,
             country: null,
             humidity: null,
             monthName: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         }
+    },
+    methods: {
+        ShowTime: function() {
+            const dThisNow = this;
+
+            setInterval(() => {
+                const d = new Date();
+
+                dThisNow.date = d.getDate() + "/" + this.monthName[d.getMonth()] + "/" + d.getFullYear();         
+                dThisNow.time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds(); 
+
+            }, 1000)
+        }
+    },
+    mounted() {
+        this.ShowTime();
     },
     async created() {
    
@@ -72,13 +88,6 @@ export default {
         this.wind = weatherData.wind.speed;
         this.country = weatherData.sys.country;
         this.humidity = weatherData.main.humidity;
-
-
-        const d = new Date();
-        this.date = d.getDate() + ' - ' + this.monthName[d.getMonth()] + ' - ' + d.getFullYear();
-        this.time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        
-        // console.log(weatherData);
     }
  }
 </script>
@@ -111,16 +120,19 @@ h2.mb-1.day {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 400px;
+    height: 80vh;
     text-align: center;
 }
 
 .temp {
-    margin: 50px 0 50px 0;
+    margin: 45px 0 45px 0;
 }
 
 .content {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 
@@ -155,13 +167,9 @@ h2.mb-1.day {
 
 table {
     position: relative;
-    left: 15px;
-    border-collapse: separate;
-    border-spacing: 15px;
-    width: 85%;
-    text-align: left;
-    max-width: 600px;
-    margin: 0 auto;
+    left: 31px;
+    width: 90%;
+    margin: 50px 20px 50px 20px;
 }
 
 th,
