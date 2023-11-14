@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       city: '',
-      showWeather: false,
+      showWeather: false
     }
   },
   methods: {
@@ -36,6 +36,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style>

@@ -1,6 +1,6 @@
 <template>
     <div class="container p-0">
-        <div class="card-1 w-100">
+        <div class="card-1 w-100" v-bind:style= "{ 'background-image': 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('+ backgroundImg +')'}" >
             <div class="content text-light">
                 <h2 class="place">{{ name }}, <small>{{ country }}</small></h2>
                 <div class="temp">
@@ -12,7 +12,7 @@
                 <small>{{ time }}</small>
             </div>
         </div>
-        <div class="card-2 w-100 p-3">
+        <div class="card-2 w-100">
             <table>
                 <tbody>
                     <tr>
@@ -20,8 +20,17 @@
                         <td>{{ humidity }}</td>
                     </tr>
                     <tr>
+                        <th>Sunrise</th>
+                        <td>{{ sunrise }}</td>
+                    </tr>
+            
+                    <tr>
                         <th>wind</th>
                         <td>{{ wind }}</td>
+                    </tr>
+                    <tr>
+                        <th>Sunset</th>
+                        <td>{{ sunset }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -34,11 +43,10 @@
 <script>
 import DaysWeather from './DaysWeather.vue';
 
-
 export default {
     name: "myWaether",
-    components: { 
-        DaysWeather 
+    components: {
+        DaysWeather,
     },
     props: {
         city: String,
@@ -50,46 +58,91 @@ export default {
             description: null,
             iconUrl: null,
             date: null,
-            time: "00:00:00",
+            time: null,
             name: null,
             wind: null,
             country: null,
             humidity: null,
+            sunrise: null,
+            sunset: null,
+            backgroundImg: "",
             monthName: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         }
-    },
-    methods: {
-        ShowTime: function() {
-            const dThisNow = this;
-
-            setInterval(() => {
-                const d = new Date();
-
-                dThisNow.date = d.getDate() + "/" + this.monthName[d.getMonth()] + "/" + d.getFullYear();         
-                dThisNow.time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds(); 
-
-            }, 1000)
-        }
-    },
-    mounted() {
-        this.ShowTime();
     },
     async created() {
    
         // get data
-        const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
-        const responseData = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=${apiKey}`).then(response => response.json());
-        const weatherData = responseData;
         
-        this.temperature = Math.round(weatherData.main.temp);
-        this.description = weatherData.weather[0].description;
-        this.name = weatherData.name;
-        this.iconUrl = `https://api.openweathermap.org/img/w/${weatherData.weather[0].icon}.png`;
-        this.wind = weatherData.wind.speed;
-        this.country = weatherData.sys.country;
-        this.humidity = weatherData.main.humidity;
+        try {
+
+            const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
+            
+            await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=${apiKey}`)
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error(response.statusText);
+                }
+                return response.json();
+            })
+            .then(response => {
+                const weatherData = response;
+
+                if (weatherData.code === '404') {
+                    throw new Error(weatherData.message);
+                } 
+            
+                this.temperature = Math.round(weatherData.main.temp);
+                this.description = weatherData.weather[0].description;
+                this.name = weatherData.name;
+                this.iconUrl = `https://api.openweathermap.org/img/w/${weatherData.weather[0].icon}.png`;
+                this.country = weatherData.sys.country;
+                
+                this.wind = weatherData.wind.speed;
+                this.sunrise = weatherData.sys.sunrise;
+                this.sunset = weatherData.sys.sunset;
+                this.humidity = weatherData.main.humidity;
+
+                switch (weatherData.weather[0].main) {
+                    case 'Clear':
+                        this.backgroundImg = "https://images.unsplash.com/photo-1529127110442-3f6ce0a9b287?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        break;
+
+                    case 'Rain':
+                        this.backgroundImg = "https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1351&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        break;
+
+                    case 'Thunderstorm':
+                        this.backgroundImg = "https://images.unsplash.com/photo-1431440869543-efaf3388c585?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        break;
+
+                    case 'Snow':
+                        this.backgroundImg = "https://images.unsplash.com/photo-1542601098-8fc114e148e2?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        break;
+
+                    case 'Clouds':
+                        this.backgroundImg = "https://images.unsplash.com/photo-1597200381847-30ec200eeb9a?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        break;
+
+                    case 'Haze':
+                        this.backgroundImg = "https://images.unsplash.com/36/STzPBJUsSza3mzUxiplj_DSC09775.JPG?q=80&w=1461&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+                        break;
+
+                    default:
+                        this.backgroundImg = "";
+                }
+            });
+
+        } catch (error) {
+            alert(error);
+        }
+
+        const d = new Date();
+
+        this.date = d.getDate() + "/" + this.monthName[d.getMonth()] + "/" + d.getFullYear();         
+        this.time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();     
     }
  }
+
 </script>
 
 <style>
@@ -116,7 +169,6 @@ h2.mb-1.day {
 .card-1 {
     border-radius: 20px;
     color: #fff;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("https://images.unsplash.com/photo-1597200381847-30ec200eeb9a?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -140,6 +192,7 @@ h2.mb-1.day {
     background-color: #212730;
     border-radius: 20px;
     margin-top: 50px;
+    padding: 50px 70px 50px 70px;
 }
 
 .card-details {
@@ -166,10 +219,8 @@ h2.mb-1.day {
 }
 
 table {
-    position: relative;
-    left: 31px;
-    width: 90%;
-    margin: 50px 20px 50px 20px;
+    width: 100%;
+    margin: 40px 0 80px 0;
 }
 
 th,

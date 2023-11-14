@@ -36,25 +36,42 @@
                 const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
                 const city = this.cityname;
                 const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
-                
-                const responseData = await fetch (apiUrl).then(response => response.json());
-                const forecastData =  responseData.list;
-                const filterData = forecastData.map( item => {
-                    return {
-                        date: moment(item.dt_txt.split(' ')[0]),
-                        temperature: Math.round(item.main.temp),
-                        description: item.weather[0].description,
-                        iconUrl: `https://api.openweathermap.org/img/w/${item.weather[0].icon}.png`,
-                    }
-                }).reduce((acc, item) => {
-                    if(!acc.some(day => day.date.isSame(item.date, 'day'))){
-                        acc.push(item);
-                    }
-                    return acc;
-                }, []).slice(1, 5);
+                try {
+                    await fetch (apiUrl)
+                    .then(response => {
+                        if(!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.json()
+                    })
+                    .then(response => {
+                        const responseData = response;
 
-               this.forecast = filterData;
-               this.loading = false;
+                        if(responseData === "404") {
+                            throw new Error(responseData.message);
+                        }
+                        
+                        const forecastData =  responseData.list;
+                        const filterData = forecastData.map( item => {
+                            return {
+                                date: moment(item.dt_txt.split(' ')[0]),
+                                temperature: Math.round(item.main.temp),
+                                description: item.weather[0].description,
+                                iconUrl: `https://api.openweathermap.org/img/w/${item.weather[0].icon}.png`,
+                            }
+                        }).reduce((acc, item) => {
+                            if(!acc.some(day => day.date.isSame(item.date, 'day'))){
+                                acc.push(item);
+                            }
+                            return acc;
+                        }, []).slice(1, 5);
+
+                    this.forecast = filterData;
+                    this.loading = false;
+                })    
+                } catch (error) {
+                    console.log(error);
+                }
             },
             getDayName(date) {
                 return date.format('ddd');
