@@ -1,7 +1,6 @@
 <template>
     <div class="days-tab text-center">
-        <div v-if="loading" class="loading">Loading...</div>
-        <div v-else class="container p-0">
+        <div class="container p-0">
             <div class="row">
                 <div v-for="day in forecast" :key="day.date" class="col">
                     <div class="py-3"><img :src="day.iconUrl"/></div>

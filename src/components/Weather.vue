@@ -1,9 +1,10 @@
 <template>
+  <div v-if="loading" id="preloader"></div>
     <div v-if="notFound" class="not-found">  
         <img src="https://cdn-icons-png.flaticon.com/512/755/755014.png">
         <p>Oops! Invalid location :/</p>
     </div>
-    <div v-else class="container p-0">
+    <div v-if="!notFound" class="container p-0">
         <div class="card-1 w-100" v-bind:style= "{ 'background-image': 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('+ backgroundImg +')'}" >
             <div class="content text-light">
                 <h2 class="place">{{ name }}, <small>{{ country }}</small></h2>
@@ -70,6 +71,7 @@ export default {
             sunrise: null,
             sunset: null,
             notFound: false,
+            loading: true,
             backgroundImg: "",
             monthName: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         }
@@ -83,6 +85,7 @@ export default {
 
             if (weatherData.cod === "404" || weatherData.cod === "400") {
                 this.notFound = true;
+                this.loading = false;
                 throw new Error(weatherData.message);
             } 
 
@@ -125,6 +128,8 @@ export default {
                 default:
                     this.backgroundImg = "";
             }
+            
+            this.loading = false;
 
         } catch (error) {
             console.log(error);
@@ -246,5 +251,39 @@ td {
     margin-top: 12px;
 }
 
+/*--------------------------------------------------------------
+# Preloader
+--------------------------------------------------------------*/
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  overflow: hidden;
+  background: #212730;
+  transition: all 0.6s ease-out;
+}
+
+#preloader:before {
+  content: "";
+  position: fixed;
+  top: calc(50% - 30px);
+  left: calc(50% - 30px);
+  border: 6px solid #fff;
+  border-color: white transparent white transparent;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: animate-preloader 1.5s linear infinite;
+}
+
+@keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 </style>
