@@ -37,38 +37,30 @@
                 const city = this.cityname;
                 const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
                 try {
-                    await fetch (apiUrl)
-                    .then(response => {
-                        if(!response.ok) {
-                            throw new Error(response.statusText);
-                        }
-                        return response.json()
-                    })
-                    .then(response => {
-                        const responseData = response;
+                    const api = await fetch (apiUrl)
+                    const responseData = await api.json();
 
-                        if(responseData === "404") {
-                            throw new Error(responseData.message);
+                    if (responseData.cod === "404" || responseData.cod === "400") {
+                        throw new Error(responseData.message);
+                    } 
+
+                    const forecastData =  responseData.list;
+                    const filterData = forecastData.map( item => {
+                        return {
+                            date: moment(item.dt_txt.split(' ')[0]),
+                            temperature: Math.round(item.main.temp),
+                            description: item.weather[0].description,
+                            iconUrl: `https://api.openweathermap.org/img/w/${item.weather[0].icon}.png`,
                         }
-                        
-                        const forecastData =  responseData.list;
-                        const filterData = forecastData.map( item => {
-                            return {
-                                date: moment(item.dt_txt.split(' ')[0]),
-                                temperature: Math.round(item.main.temp),
-                                description: item.weather[0].description,
-                                iconUrl: `https://api.openweathermap.org/img/w/${item.weather[0].icon}.png`,
-                            }
-                        }).reduce((acc, item) => {
-                            if(!acc.some(day => day.date.isSame(item.date, 'day'))){
-                                acc.push(item);
-                            }
-                            return acc;
-                        }, []).slice(1, 5);
+                    }).reduce((acc, item) => {
+                        if(!acc.some(day => day.date.isSame(item.date, 'day'))){
+                            acc.push(item);
+                        }
+                        return acc;
+                    }, []).slice(1, 5);
 
                     this.forecast = filterData;
                     this.loading = false;
-                })    
                 } catch (error) {
                     console.log(error);
                 }
@@ -83,10 +75,10 @@
 <style>
 
 .days-tab {
-    width: 90%;
+    width: 100%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 20px;
-    margin: 80px 50px 80px 50px;
+    margin: 80px 0 80px 0;
 }
 
 .loading {
