@@ -161,12 +161,12 @@ h2.mb-1.day {
 }
 
 .card-1 {
-    border-radius: 20px;
     color: #fff;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     height: 80vh;
+    border-radius: 5px;
     text-align: center;
 }
 
@@ -184,8 +184,8 @@ h2.mb-1.day {
 
 .card-2 {
     background-color: #212730;
-    border-radius: 20px;
     margin-top: 50px;
+    border-radius: 5px;
     padding: 50px 70px 50px 70px;
 }
 

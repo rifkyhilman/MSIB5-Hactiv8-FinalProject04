@@ -47,8 +47,8 @@ body {
 
 .header {
   background-color: #212730;
-  border-radius: 20px;
   color: #fff;
+  border-radius: 5px;
   text-align: center;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   margin-top: 5rem;
