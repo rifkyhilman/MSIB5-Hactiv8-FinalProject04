@@ -30,9 +30,13 @@ export default {
   },
   methods: {
     async searchWeather() {
-      this.showWeather = false;
-      await this.$nextTick();
-      this.showWeather = true;
+      
+      setTimeout(async ()=> {
+        this.showWeather = false;
+        await this.$nextTick();
+        this.showWeather = true;
+      }, 600)
+   
     }
   }
 }
