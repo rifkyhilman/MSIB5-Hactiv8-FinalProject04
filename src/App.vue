@@ -4,13 +4,13 @@
         <h1 class="mb-5">Weather App</h1>
         <div class="d-flex justify-content-center h-100">
           <div class="searchbar w-50 mx-2">
-            <input type="text" class="input form-control" v-model="city" placeholder="Enter a City">
+            <input type="text" class="input form-control" ref="inputCity" placeholder="Enter a City">
           </div>
-          <button class="btn-search btn btn-primary" @click="searchWeather"><i class="fas fa-search"></i></button>
+          <button class="btn-search btn btn-primary" @click="handleCity"><i class="fas fa-search"></i></button>
         </div>
       </div>
   </div>
-  <Weather :city="city" v-if="showWeather" />
+  <Weather :city="city"/>
 </template>
 
 <script>
@@ -25,18 +25,12 @@ export default {
   data () {
     return {
       city: '',
-      showWeather: false
     }
   },
   methods: {
-    async searchWeather() {
-      
-      setTimeout(async ()=> {
-        this.showWeather = false;
-        await this.$nextTick();
-        this.showWeather = true;
-      }, 600)
-   
+    handleCity() {
+        let valueCity = this.$refs.inputCity.value;
+        this.city = valueCity;
     }
   }
 }
