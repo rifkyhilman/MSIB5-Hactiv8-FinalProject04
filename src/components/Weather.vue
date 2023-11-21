@@ -104,7 +104,7 @@ export default {
         async fetchFromApi (val) {
                 try {
                 // get data
-                const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
+                const apiKey = process.env.VUE_APP_SECRET_KEY;
                 const api = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${val}&units=metric&appid=${apiKey}`)
                 const  weatherData = await api.json();
 

@@ -32,7 +32,7 @@
         },
         methods: {
             async fetchWeatherData () {
-                const apiKey = '716e2ccdcf5d9ed0b976a7a9480465ec';
+                const apiKey = process.env.VUE_APP_SECRET_KEY;
                 const city = this.cityname;
                 const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
                 try {
